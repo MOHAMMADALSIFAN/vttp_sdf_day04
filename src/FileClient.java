@@ -1,10 +1,4 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -14,6 +8,16 @@ public class FileClient {
         
         // Create output stream to send data to the server
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+        writer.write(filename);
+        writer.newLine();
+        
+        File file = new File(filename);
+        long fileSize = file.length();
+
+         // Send the file size
+         writer.write(String.valueOf(fileSize));
+         writer.newLine();  // Send a new line to indicate end of file size
 
         // open the file to read its contents
         BufferedReader fileReader = new BufferedReader(new FileReader(filename));
@@ -51,9 +55,24 @@ public class FileClient {
         System.out.println("Enter the name of the file to send: ");
         String fileName = scanner.nextLine();
         scanner.close();
+
+        createFile(fileName);
         
         //send the file to the server
         sendFile(socket, fileName);
 
+        scanner.close();
+
     }
+
+       // Method to create a file and write sample content
+    private static void createFile(String fileName) {
+        try {
+        new File(fileName).createNewFile();
+            System.out.println("File '" + fileName + "' created successfully.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while creating/writing to the file: " + e.getMessage());
+        }
+    }
+
 }

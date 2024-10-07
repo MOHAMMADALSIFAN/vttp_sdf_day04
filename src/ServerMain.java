@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,23 +10,31 @@ public class ServerMain {
         //create input stream to receive data from client
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         
+        
+        String fileName = reader.readLine();
+        long fileSize = Long.parseLong(reader.readLine()); 
+        
+
+        System.out.println("Received File " + fileName + "----(size " + fileSize + " bytes ) ");
+
         //create a file to store the received data
-        BufferedWriter fileWriter = new BufferedWriter(new FileWriter("received_from_client.txt"));
+        
+        BufferedWriter fileWriter = new BufferedWriter(new FileWriter(fileName));
 
         String line;
         while ((line = reader.readLine()) != null) {
             fileWriter.write(line);
-            fileWriter.newline();
+            fileWriter.newLine();
+
             
         }
+        fileWriter.close();
+        reader.close();
+        socket.close();
+        System.out.println("File received and saves as " + fileName + "'.");
 
     
     }
-
-
-
-
-
 
 
 
@@ -37,7 +42,7 @@ public class ServerMain {
         
       // Creating a server socket and waiting or a client connection
       ServerSocket server = new ServerSocket(5000);
-      System.out.println("Waiting for connection on port 5000 ");
+      System.out.println("Waiting for connection on port 5000... ");
 
       // Accept client connection
       Socket socket = server.accept();
